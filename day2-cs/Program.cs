@@ -4,18 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 
 namespace day2_cs
 {
     internal class Program
     {
     
-        static bool isValid(int[] nums)
+        static bool isValid(int[] nums, out bool nb)
         {
             bool res = false;
             List<int> tnums = new List<int>(nums);
             bool asc = false;
-            int removeIndex = 0;
+            int removeIndex = -1;
+            nb = false;
+            bool firstTime = true;
 
             while(!(res))
             {
@@ -46,17 +49,17 @@ namespace day2_cs
                 }
                 if(!(res))
                 {
+                    firstTime = false;
                     tnums = new List<int>(nums);
-                    if(removeIndex < nums.Length)
+                    ++removeIndex;
+                    if (removeIndex < nums.Length)
                         tnums.RemoveAt(removeIndex);
-
-                    if (removeIndex++ == nums.Length + 1)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
+                    else
                         return false;
-                    }
                 }
             }
+            if (firstTime)
+                nb = true;
 
             return true;
         }
@@ -66,22 +69,33 @@ namespace day2_cs
         static void Main(string[] args)
         {
             string[] lines = File.ReadAllLines(@"C:\test\AOC2024\AOC2.txt");
-            int nb = 0;
+            int nb2 = 0;
+            int nb1 = 0;
+            bool isNb1 = false;
           
 
-
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
       
             foreach (string line in lines)
             {
                 string[] snum = line.Split(' ');
                 int[] num = Array.ConvertAll(snum, s => int.Parse(s));
-                if (isValid(num))
-                    ++nb;
+                if (isValid(num, out isNb1))
+                {
+                    ++nb2;
+                    if (isNb1)
+                    {
+                        ++nb1;
+                    }
+                }
                 
             }
+            stopwatch.Stop();
 
-
-            Console.WriteLine(nb);
+            Console.WriteLine("Result 1 : " + nb1);
+            Console.WriteLine("Result 2 : " + nb2);
+            Console.WriteLine($"Time     : {stopwatch.Elapsed:g}");
             Console.ReadLine();
 
 
